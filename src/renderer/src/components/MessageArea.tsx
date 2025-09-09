@@ -3,6 +3,7 @@ import { formatFileSize, formatTime, getContrastTextColor } from '../lib/utils'
 import { Button, Card } from './ui/CustomComponents'
 import { useContext } from 'react'
 import { ClientContext } from '@renderer/context/ClientContext'
+import Loader from './ui/loader'
 
 const MessageArea = ({
   isDragging,
@@ -12,7 +13,7 @@ const MessageArea = ({
   messages,
   messagesEndRef
 }) => {
-  const { isConnectedToServer }: any = useContext(ClientContext)
+  const { isConnectedToServer, loading }: any = useContext(ClientContext)
 
   return (
     <div
@@ -34,10 +35,19 @@ const MessageArea = ({
         </div>
       )}
 
-      {!isConnectedToServer ? (
+      {loading && (
         <div className="h-full flex items-center justify-center">
           <div className="text-center">
-            <WifiSVG/>
+            <Loader />
+            <p className="text-lg font-bold text-[#10b981]">Connecting to Server...</p>
+          </div>
+        </div>
+      )}
+
+      {!isConnectedToServer && !loading ? (
+        <div className="h-full flex items-center justify-center">
+          <div className="text-center">
+            <WifiSVG />
             <p className="text-lg font-bold text-[#10b981]">
               Connect to a server to start communication
             </p>

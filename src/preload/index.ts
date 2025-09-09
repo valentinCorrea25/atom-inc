@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('websocket', {
-  hostServer: () => ipcRenderer.invoke('websocket:startServer'),
+  hostServer: (port:number) => ipcRenderer.invoke('websocket:startServer', port),
   stopServer: () => ipcRenderer.invoke('websocket:stopServer'),
 })
 

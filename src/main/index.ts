@@ -44,7 +44,7 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
-  ipcMain.handle('websocket:startServer', handleStartServer)
+  ipcMain.handle('websocket:startServer', (_, port) => handleStartServer(port))
   ipcMain.handle('websocket:stopServer', handleStopServer)
   ipcMain.handle('client:getIp', getServerIpAddress)
 
@@ -86,8 +86,8 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-function handleStartServer() {
-  return hostServer()
+function handleStartServer(port:number) {
+  return hostServer(port)
 }
 
 function handleStopServer() {

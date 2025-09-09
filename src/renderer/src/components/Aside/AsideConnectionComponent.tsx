@@ -9,11 +9,17 @@ const AsideConnectionComponent = () => {
   //@ts-expect-error
   const { clientIp, connectToServer }: ClientContextType = useContext(ClientContext)
   //@ts-expect-error
-  const { startHostServer, stopHostServer, loading, isServerUp }: HostContextType =
-    useContext(HostContext)
+  const {
+    startHostServer,
+    stopHostServer,
+    loading,
+    isServerUp,
+    hostPort,
+    setHostPort
+  }: HostContextType = useContext(HostContext)
 
   const handleConnectToServer = async (ip: string, port?: string | number) => {
-    const portNumber = Number(port) || 9863
+    const portNumber = Number(port) || 9853
     const serverIp = `${ip}:${portNumber}`
     connectToServer(serverIp)
   }
@@ -28,9 +34,11 @@ const AsideConnectionComponent = () => {
         <HostOptions
           handleHost={startHostServer}
           ip={clientIp}
+          hostPort={hostPort}
           loading={loading}
           isServerUp={isServerUp}
           stopHostServer={stopHostServer}
+          setHostPort={setHostPort}
         />
       ) : (
         <ClientOptions handleConnectToServer={handleConnectToServer} />
@@ -41,7 +49,15 @@ const AsideConnectionComponent = () => {
 
 export default AsideConnectionComponent
 
-const HostOptions = ({ loading, ip, handleHost, isServerUp, stopHostServer }) => {
+const HostOptions = ({
+  loading,
+  ip,
+  hostPort,
+  handleHost,
+  isServerUp,
+  stopHostServer,
+  setHostPort
+}) => {
   return (
     <div className="p-4 border-b border-[--bcolor]">
       {!loading && isServerUp ? (
@@ -50,16 +66,30 @@ const HostOptions = ({ loading, ip, handleHost, isServerUp, stopHostServer }) =>
             <span>Being Host</span>
             <div className="w-4 h-4 bg-green-600 animate-pulse rounded-full" />
           </div>
-          {/* <h1 className="text-center font-mono text-sm">{ip}</h1> */}
-          <UrlHighlight className="text-center" url={ip} />
+          <UrlHighlight className="text-center" url={ip + ':' + hostPort} />
           <Button onClick={stopHostServer} variant="outline" className="w-full">
             Stop Server
           </Button>
         </div>
       ) : (
-        <Button onClick={handleHost} variant="primary" className="w-full">
-          Start Server
-        </Button>
+        <>
+          <div className="w-full flex justify-center items-center my-4 gap-2">
+            <h2>Host port: </h2>
+            <Input
+              placeholder="9853"
+              className="!w-20"
+              max={9999}
+              defaultValue={hostPort}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                setHostPort(value)
+              }}
+            />
+          </div>
+          <Button onClick={handleHost} variant="primary" className="w-full">
+            Start Server
+          </Button>
+        </>
       )}
     </div>
   )

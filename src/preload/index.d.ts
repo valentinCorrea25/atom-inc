@@ -5,7 +5,7 @@ declare global {
     electron: ElectronAPI
     api: unknown
     websocket: {
-      hostServer: () => Promise<string>
+      hostServer: (port:number) => Promise<string>
       stopServer: () => Promise<void>
     }
     client: {

@@ -2,17 +2,18 @@ import { networkInterfaces } from 'os'
 import { WebSocketServer, WebSocket } from 'ws'
 import {v4 as uuidv4} from 'uuid';
 
-const PORT = 9853
+const DEFAULT_PORT = 9853
 let wss: WebSocketServer | null = null
 
-export function hostServer(): boolean {
+export function hostServer(port:number): boolean {
+  const portUsed = port || DEFAULT_PORT
   try {
     if (wss) {
       console.log('⚠️  Server already running, closing previous instance...')
       stopServer()
     }
 
-    wss = new WebSocketServer({ port: PORT })
+    wss = new WebSocketServer({ port: portUsed })
     const ipAdd = getServerIpAddress()
 
     if (!ipAdd) {
@@ -20,7 +21,7 @@ export function hostServer(): boolean {
       return false
     }
 
-    console.log(`🛜 Server Hosted at: ${ipAdd}:${PORT}`)
+    console.log(`🛜 Server Hosted at: ${ipAdd}:${portUsed}`)
 
     wss.on('error', handleServerError)
     wss.on('connection', function connection(ws: WebSocket, request) {

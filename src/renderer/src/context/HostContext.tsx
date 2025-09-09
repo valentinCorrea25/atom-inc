@@ -7,6 +7,8 @@ interface HostContextType {
   loading: boolean
   setLoading: (value: boolean) => void
   isServerUp: boolean
+  hostPort: number
+  setHostPort: any
 }
 interface HostContextProviderProps {
   children: ReactNode
@@ -18,16 +20,19 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
   if (!clientContext) throw new Error('ClientContext must be used within a ClientProvider')
 
   const [isServerUp, setIsServerUp] = useState(false)
-  const [hostPort] = useState(9853)
+  const [hostPort, setHostPort] = useState(9853)
   const { setLoading, loading, connectToServer, clientIp, disconnectFromServer }: any =
     clientContext
 
   const startHostServer = async () => {
     setLoading(true)
     try {
-      const hasConnected = await window.websocket.hostServer()
+      const hasConnected = await window.websocket.hostServer(hostPort)
       if (hasConnected) setIsServerUp(true)
       connectToServer(`${clientIp}:${hostPort}`)
+      
+    } catch (err) {
+      console.log(err)
     } finally {
       setLoading(false)
     }
@@ -46,7 +51,15 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
 
   return (
     <HostContext.Provider
-      value={{ startHostServer, stopHostServer, loading, setLoading, isServerUp }}
+      value={{
+        startHostServer,
+        stopHostServer,
+        loading,
+        setLoading,
+        isServerUp,
+        hostPort,
+        setHostPort
+      }}
     >
       {children}
     </HostContext.Provider>

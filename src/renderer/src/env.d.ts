@@ -38,8 +38,10 @@ export interface HostContextType {
   stopHostServer: () => Promise<void>
   loading: boolean
   setLoading: Dispatch<SetStateAction<boolean>>
+  isServerUp: boolean
+  hostPort: number
+  setHostPort: Dispatch<SetStateAction<number>>
 }
-
 
 export interface ClientContextType {
   connectToServer: (ip: string) => void

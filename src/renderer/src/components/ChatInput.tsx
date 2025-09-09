@@ -12,8 +12,7 @@ const ChatInput = ({
   fileInputRef,
   handleSendMessage
 }) => {
-
-  const {isConnectedToServer}:any = useContext(ClientContext);
+  const { isConnectedToServer }: any = useContext(ClientContext)
 
   return (
     <div
@@ -58,10 +57,9 @@ const ChatInput = ({
         </Button>
       </div>
       <div
-        className="flex justify-between items-center mt-2 text-xs"
+        className="flex justify-end items-center mt-2 text-xs"
         style={{ color: 'rgb(153, 153, 153)' }}
       >
-        <span>Presiona Enter para enviar</span>
         <span>{newMessage.length}/500</span>
       </div>
     </div>

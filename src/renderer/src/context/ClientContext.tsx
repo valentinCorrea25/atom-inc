@@ -23,6 +23,8 @@ interface ClientContextProviderProps {
   children: ReactNode
 }
 
+let hasMounted = false
+
 const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
   const [loading, setLoading] = useState(false)
   const [clientIp, setClientIp] = useState<string>('')
@@ -44,10 +46,14 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
         connectToServer(lastConnection)
       }
     }
-    fetchIp()
+    if (!hasMounted) {
+      hasMounted = true
+      fetchIp()
+    }
   }, [])
 
   const connectToServer = (serverIp: string) => {
+    setMessages([])
     setLoading(true)
     try {
       connectionWebSocketRef.current = new WebSocket('ws://' + serverIp, 'json')
@@ -111,7 +117,6 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       }
       //@ts-expect-error
       connectionWebSocketRef.current.send(JSON.stringify(msg))
-      
     } catch (error) {
       alert(error)
     } finally {
