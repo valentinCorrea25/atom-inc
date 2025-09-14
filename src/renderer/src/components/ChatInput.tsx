@@ -15,23 +15,15 @@ const ChatInput = ({
   const { isConnectedToServer }: any = useContext(ClientContext)
 
   return (
-    <div
-      className="p-4 border-t"
-      style={{ backgroundColor: 'rgb(51, 51, 51)', borderColor: 'rgb(102, 102, 102)' }}
-    >
+    <div className="p-4 border-t border-[var(--border-color)] bg-[var(--bg-color)]">
       <div className="flex gap-2">
         <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           disabled={!isConnectedToServer}
           onKeyPress={handleKeyPress}
-          placeholder="Escribe tu mensaje..."
-          className="flex-1 text-white"
-          style={{
-            backgroundColor: 'rgb(26, 26, 26)',
-            borderColor: 'rgb(102, 102, 102)',
-            color: 'white'
-          }}
+          placeholder="Write you message..."
+          className="flex-1 text-white border-[var(--border-color)] bg-[var(--bg-d-color)]"
           maxLength={500}
         />
         <input ref={fileInputRef} type="file" onChange={handleFileSelect} className="hidden" />

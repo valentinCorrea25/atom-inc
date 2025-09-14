@@ -87,11 +87,7 @@ const MessageArea = ({
                   </p>
                 ) : message.type === 'file' ? (
                   <Card
-                    className="p-3 max-w-sm"
-                    style={{
-                      backgroundColor: 'rgb(51, 51, 51)',
-                      borderColor: 'rgb(102, 102, 102)'
-                    }}
+                    className="p-3 max-w-sm border-[var(--border-color)] bg-[var(--bg-color)]"
                   >
                     <div className="flex items-center gap-3">
                       <Paperclip className="w-5 h-5" style={{ color: 'rgb(153, 153, 153)' }} />
@@ -103,10 +99,6 @@ const MessageArea = ({
                       </div>
                       <Button
                         variant="outline"
-                        style={{
-                          borderColor: 'rgb(102, 102, 102)',
-                          backgroundColor: 'transparent'
-                        }}
                         className="hover:bg-opacity-20 bg-transparent"
                       >
                         <Download className="w-4 h-4" />

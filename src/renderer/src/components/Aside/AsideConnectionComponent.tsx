@@ -35,7 +35,7 @@ const HostOptions = () => {
   const { clientIp }: ClientContextType = useContext(ClientContext)
 
   return (
-    <div className="p-4 border-b border-[--bcolor]">
+    <div className="p-4 border-b border-[var(--border-color)]">
       {!loading && isServerUp ? (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-center gap-3">
@@ -90,7 +90,7 @@ const ClientOptions = () => {
   }
 
   return (
-    <div className="p-4 border-b border-[--bcolor]">
+    <div className="p-4 border-b border-[var(--border-color)]">
       <div className="mb-4">
         <label className="text-sm mb-2 block" style={{ color: 'rgb(153, 153, 153)' }}>
           Connect To

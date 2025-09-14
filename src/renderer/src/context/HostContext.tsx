@@ -1,5 +1,6 @@
-import { createContext, useContext, ReactNode, useState } from 'react'
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 import { ClientContext } from './ClientContext'
+import { getFromLocalStorage } from '@renderer/lib/utils'
 
 interface HostContextType {
   startHostServer: () => Promise<void>
@@ -21,16 +22,38 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
 
   const [isServerUp, setIsServerUp] = useState(false)
   const [hostPort, setHostPort] = useState(9853)
-  const { setLoading, loading, connectToServer, clientIp, disconnectFromServer }: any =
-    clientContext
+  const {
+    setLoading,
+    loading,
+    connectToServer,
+    clientIp,
+    disconnectFromServer,
+    isConnectedToServer
+  }: any = clientContext
+
+  useEffect(() => {
+    if (clientIp) {
+      const connectOnStartup = getFromLocalStorage('settings-connectOnStartup')
+      const startAsServer = getFromLocalStorage('settings-startAsServer')
+      if (connectOnStartup && startAsServer) {
+        startHostServer()
+      }
+    }
+  }, [clientIp])
+
+  useEffect(() => {
+    if (!isConnectedToServer) {
+      stopHostServer()
+    }
+  }, [isConnectedToServer])
 
   const startHostServer = async () => {
+    if (!clientIp) return
     setLoading(true)
     try {
       const hasConnected = await window.websocket.hostServer(hostPort)
       if (hasConnected) setIsServerUp(true)
       connectToServer(`${clientIp}:${hostPort}`)
-      
     } catch (err) {
       console.log(err)
     } finally {

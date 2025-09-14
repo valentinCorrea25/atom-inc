@@ -13,11 +13,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       default: 'bg-[#333333] text-white hover:bg-[#444444] focus-visible:ring-[#555555]',
-      primary: 'bg-[#10b981] text-white hover:bg-[#059669] focus-visible:ring-[#10b981]',
+      primary: 'bg-[var(--primary)] text-white hover:bg-[#059669] focus-visible:ring-[var(--primary)]',
       secondary: 'bg-[#222222] text-white hover:bg-[#333333] border border-[#333333]',
-      ghost: 'hover:bg-[#222222] text-white',
+      ghost: 'hover:bg-[#222222] text-white cursor-pointer',
       link: 'underline-offset-4 hover:underline text-white',
-      outline: 'border border-[#10b981]/50 bg-transparent text-white hover:bg-[#222222]',
+      outline: 'border border-[var(--primary)]/50 bg-transparent text-white hover:bg-[#222222]',
       file: 'w-9 h-9 rounded-full bg-[#333333] hover:bg-[#444444] p-0',
       send: 'w-9 h-9 rounded-full bg-[#333333] hover:bg-[#444444] p-0'
     }
@@ -70,7 +70,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-lg border border-[#333333] bg-[#111111] text-white shadow-sm ${className}`}
+        className={`rounded-lg border border-[var(--border-color)] bg-[var(--bg-color)] text-white shadow-sm ${className}`}
         {...props}
       >
         {children}
@@ -162,7 +162,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
       secondary: 'border-transparent bg-[#222222] text-white hover:bg-[#333333]',
       destructive: 'border-transparent bg-red-500 text-white hover:bg-red-600',
       outline: 'text-white border-[#333333]',
-      online: 'border-transparent bg-[#10b981] text-white',
+      online: 'border-transparent bg-[var(--primary)] text-white',
       offline: 'border-transparent bg-[#6b7280] text-white'
     }
 
@@ -207,7 +207,7 @@ interface SwitcherProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Switcher = React.forwardRef<HTMLButtonElement, SwitcherProps>(
   ({ className = '', checked = false, onCheckedChange, ...props }, ref) => {
     const baseStyles =
-      'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#555555] disabled:opacity-50 disabled:pointer-events-none'
+      'relative cursor-pointer inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#555555] disabled:opacity-50 disabled:pointer-events-none'
     const bg = checked ? 'bg-[#10b981]' : 'bg-[#333333]'
     const knob = 'inline-block h-4 w-4 transform rounded-full bg-white transition-transform'
     const knobPos = checked ? 'translate-x-6' : 'translate-x-1'
@@ -271,6 +271,45 @@ const UrlHighlight = React.forwardRef<HTMLDivElement, UrlHighlightProps>(
 
 UrlHighlight.displayName = 'UrlHighlight'
 
+// Radio Component
+interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string
+  description?: string
+}
+
+const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
+  ({ className = '', label, description, id, ...props }, ref) => {
+    const baseStyles =
+      'w-4 h-4 text-[var(--primary)] bg-[var(--bg-d-color)] border-[var(--border-color)] focus:ring-[var(--primary)] appearance-none rounded-full relative before:content-[""] before:absolute before:top-1/2 before:left-1/2 before:transform before:-translate-x-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:bg-[var(--primary)] before:rounded-full before:opacity-0 checked:before:opacity-100'
+
+    return (
+      <div className="flex items-center gap-3">
+        <input
+          type="radio"
+          ref={ref}
+          id={id}
+          className={`${baseStyles} ${className}`}
+          {...props}
+        />
+        {label && (
+          <div className="flex-1">
+            <label htmlFor={id} className="text-sm text-white cursor-pointer">
+              {label}
+            </label>
+            {description && (
+              <p className="text-xs text-[#888888] mt-1">
+                {description}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+)
+
+Radio.displayName = 'Radio'
+
 export {
   Switcher,
   Select,
@@ -283,5 +322,6 @@ export {
   CardDescription,
   CardContent,
   CardFooter,
-  Badge
+  Badge,
+  Radio
 }

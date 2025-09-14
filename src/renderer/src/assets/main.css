@@ -1,6 +1,6 @@
 @import './base.css';
 @import "tailwindcss";
-/* archivo global.css o styles.css */
+
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -10,7 +10,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2); /* casi transparente */
+  background: rgba(255, 255, 255, 0.2); 
   border-radius: 10px;
 }
 
@@ -20,5 +20,11 @@
 
 :root {
   --bcolor: rgb(102, 102, 102);
+}
 
+:root {
+  --bg-color: rgb(48, 48, 48);
+  --bg-d-color: rgb(26, 26, 26);
+  --border-color: rgb(102, 102, 102);
+  --primary: #10b981;
 }

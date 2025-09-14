@@ -7,8 +7,7 @@ import {
 const MessageAreaHeader = ({setIsSidebarCollapsed, isSidebarCollapsed}) => {
     return (
        <div
-          className="p-4 border-b flex items-center justify-between"
-          style={{ backgroundColor: 'rgb(51, 51, 51)', borderColor: 'rgb(102, 102, 102)' }}
+          className="p-4 border-b flex items-center justify-between border-[var(--border-color)] bg-[var(--bg-color)]"
         >
           <div className="flex items-center gap-5">
             <Button

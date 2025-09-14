@@ -2,20 +2,15 @@
 // import { Component2Icon as Wifi, Cross1Icon as X } from '@radix-ui/react-icons'
 import AsideHeader from './AsideHeader'
 import AsideConnectionComponent from './AsideConnectionComponent'
-import { Input } from '../ui/common'
-import { useContext } from 'react'
-import { ClientContext } from '@renderer/context/ClientContext'
-import { setToLocalStorage } from '@renderer/lib/utils'
 
 const Aside = ({ isSidebarCollapsed, setIsSidebarCollapsed }: any) => {
   return (
     <aside
-      className={`${isSidebarCollapsed ? 'w-0 overflow-hidden md:w-80 md:overflow-visible' : 'w-80'} transition-all duration-300 border-r flex flex-col  absolute md:static z-20 h-full`}
-      style={{ backgroundColor: 'rgb(51, 51, 51)', borderColor: 'rgb(102, 102, 102)' }}
+      className={`${isSidebarCollapsed ? 'w-0 overflow-hidden md:w-80 md:overflow-visible' : 'w-80'} transition-all duration-300 border-r flex flex-col  absolute md:static z-20 h-full border-[var(--border-color)] bg-[var(--bg-color)]` }
     >
       <AsideHeader setIsSidebarCollapsed={setIsSidebarCollapsed} />
       <AsideConnectionComponent />
-      <ColorPicker />
+
       {/* <ConnectedUser users={users} /> */}
     </aside>
   )
@@ -23,41 +18,6 @@ const Aside = ({ isSidebarCollapsed, setIsSidebarCollapsed }: any) => {
 
 export default Aside
 
-const ColorPicker = () => {
-  const { clientName, clientColor, setClientName, setClientColor }: any = useContext(ClientContext)
-
-  return (
-    <div className="p-4 border-b " style={{ borderColor: 'rgb(102, 102, 102)' }}>
-      <div className="mb-4 space-y-4">
-        <label className="text-sm mb-2 block" style={{ color: 'rgb(153, 153, 153)' }}>
-          Nombre del dispositivo:
-        </label>
-        <Input
-          placeholder="Device Name"
-          value={clientName}
-          onChange={(e) => {
-            setClientName(e.target.value)
-            setToLocalStorage('name', e.target.value)
-          }}
-        />
-
-        <label className="text-sm mb-2 block" style={{ color: 'rgb(153, 153, 153)' }}>
-          Mi color:
-        </label>
-        <input
-          type="color"
-          value={clientColor}
-          onChange={(e) => {
-            setClientColor(e.target.value)
-            setToLocalStorage('color', e.target.value)
-          }}
-          className="w-12 h-8 border rounded cursor-pointer"
-          style={{ borderColor: 'rgb(102, 102, 102)' }}
-        />
-      </div>
-    </div>
-  )
-}
 
 // const ConnectedUser = ({ users }) => {
 //   return (

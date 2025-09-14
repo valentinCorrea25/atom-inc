@@ -111,7 +111,7 @@ export default function ChatApp() {
   }
 
   return (
-    <main className="h-screen text-white flex" style={{ backgroundColor: 'rgb(26, 26, 26)' }}>
+    <main className="h-screen text-white flex bg-[var(--bg-d-color)]">
       <Aside
         users={users}
         isSidebarCollapsed={isSidebarCollapsed}

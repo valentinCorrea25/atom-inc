@@ -1,5 +1,5 @@
 import { Message } from '@renderer/env'
-import { getFromLocalStorage, setToLocalStorage } from '@renderer/lib/utils'
+import { getFromLocalStorage } from '@renderer/lib/utils'
 import { createContext, useState, ReactNode, useRef, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -41,9 +41,10 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       setClientColor(getFromLocalStorage('color') || '#fff')
       setClientName(getFromLocalStorage('name') || 'Device')
 
-      const lastConnection = getFromLocalStorage('last-connection')
-      if (lastConnection) {
-        connectToServer(lastConnection)
+      const autoConnectIP = getFromLocalStorage('settings-autoConnectIP')
+      if (autoConnectIP) {
+        console.log('autoconnect ip');
+        connectToServer(autoConnectIP)
       }
     }
     if (!hasMounted) {
@@ -61,8 +62,6 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
 
       ws.onopen = function () {
         setIsConnectedToServer(true)
-        setToLocalStorage('last-connection', serverIp)
-        console.log('Connected')
       }
 
       ws.onmessage = function (evt) {
