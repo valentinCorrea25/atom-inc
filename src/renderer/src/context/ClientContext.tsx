@@ -71,6 +71,13 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
         console.log(msg)
       }
 
+      ws.onclose = function (evt) {
+        console.log(evt)
+        setIsConnectedToServer(false)
+        const serverIpwithoutPort = serverIp.slice(0, -5)
+        if (serverIpwithoutPort != clientIp) alert('Disconnected from server')
+      }
+
       ws.onerror = function (evt) {
         console.log(evt)
 

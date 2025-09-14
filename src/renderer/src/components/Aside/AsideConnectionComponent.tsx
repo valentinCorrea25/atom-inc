@@ -6,8 +6,21 @@ import { ClientContextType, HostContextType } from '@renderer/env'
 
 const AsideConnectionComponent = () => {
   const [itsHost, setItsHost] = useState(false)
-  //@ts-expect-error
-  const { clientIp, connectToServer }: ClientContextType = useContext(ClientContext)
+
+  return (
+    <>
+      <div className="p-4 pb-0 flex gap-3 justify-center items-center border-[--bcolor]">
+        <h1>Be Host</h1>
+        <Switcher checked={itsHost} onCheckedChange={setItsHost} />
+      </div>
+      {itsHost ? <HostOptions /> : <ClientOptions />}
+    </>
+  )
+}
+
+export default AsideConnectionComponent
+
+const HostOptions = () => {
   //@ts-expect-error
   const {
     startHostServer,
@@ -18,46 +31,9 @@ const AsideConnectionComponent = () => {
     setHostPort
   }: HostContextType = useContext(HostContext)
 
-  const handleConnectToServer = async (ip: string, port?: string | number) => {
-    const portNumber = Number(port) || 9853
-    const serverIp = `${ip}:${portNumber}`
-    connectToServer(serverIp)
-  }
+  //@ts-expect-error
+  const { clientIp }: ClientContextType = useContext(ClientContext)
 
-  return (
-    <>
-      <div className="p-4 pb-0 flex gap-3 justify-center items-center border-[--bcolor]">
-        <h1>Be Host</h1>
-        <Switcher checked={itsHost} onCheckedChange={setItsHost} disabled={isServerUp} />
-      </div>
-      {itsHost ? (
-        <HostOptions
-          handleHost={startHostServer}
-          ip={clientIp}
-          hostPort={hostPort}
-          loading={loading}
-          isServerUp={isServerUp}
-          stopHostServer={stopHostServer}
-          setHostPort={setHostPort}
-        />
-      ) : (
-        <ClientOptions handleConnectToServer={handleConnectToServer} />
-      )}
-    </>
-  )
-}
-
-export default AsideConnectionComponent
-
-const HostOptions = ({
-  loading,
-  ip,
-  hostPort,
-  handleHost,
-  isServerUp,
-  stopHostServer,
-  setHostPort
-}) => {
   return (
     <div className="p-4 border-b border-[--bcolor]">
       {!loading && isServerUp ? (
@@ -66,7 +42,7 @@ const HostOptions = ({
             <span>Being Host</span>
             <div className="w-4 h-4 bg-green-600 animate-pulse rounded-full" />
           </div>
-          <UrlHighlight className="text-center" url={ip + ':' + hostPort} />
+          <UrlHighlight className="text-center" url={clientIp + ':' + hostPort} />
           <Button onClick={stopHostServer} variant="outline" className="w-full">
             Stop Server
           </Button>
@@ -86,7 +62,7 @@ const HostOptions = ({
               }}
             />
           </div>
-          <Button onClick={handleHost} variant="primary" className="w-full">
+          <Button onClick={startHostServer} variant="primary" className="w-full">
             Start Server
           </Button>
         </>
@@ -95,9 +71,23 @@ const HostOptions = ({
   )
 }
 
-const ClientOptions = ({ handleConnectToServer }) => {
+const ClientOptions = () => {
   const [ip, setIp] = useState('')
   const [port, setPort] = useState('')
+
+  //@ts-expect-error
+  const { connectToServer, isConnectedToServer, disconnectFromServer }: ClientContextType =
+    useContext(ClientContext)
+
+  const handleConnectToServer = () => {
+    const portNumber = Number(port) || 9853
+    const serverIp = `${ip}:${portNumber}`
+    connectToServer(serverIp)
+  }
+
+  const handleDisconnectFromServer = () => {
+    disconnectFromServer()
+  }
 
   return (
     <div className="p-4 border-b border-[--bcolor]">
@@ -116,19 +106,15 @@ const ClientOptions = ({ handleConnectToServer }) => {
           />
         </div>
       </div>
-      <Button
-        variant="primary"
-        onClick={() => {
-          if (port) {
-            handleConnectToServer(ip, Number(port))
-          } else {
-            handleConnectToServer(ip)
-          }
-        }}
-        className="w-full"
-      >
-        Connect
-      </Button>
+      {isConnectedToServer ? (
+        <Button variant="outline" onClick={handleDisconnectFromServer} className="w-full">
+          Disconnect
+        </Button>
+      ) : (
+        <Button variant="primary" onClick={handleConnectToServer} className="w-full">
+          Connect
+        </Button>
+      )}
     </div>
   )
 }

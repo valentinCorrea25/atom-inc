@@ -1,11 +1,12 @@
 import { networkInterfaces } from 'os'
 import { WebSocketServer, WebSocket } from 'ws'
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 const DEFAULT_PORT = 9853
 let wss: WebSocketServer | null = null
+const connectedUsersIps: string[] = []
 
-export function hostServer(port:number): boolean {
+export function hostServer(port: number): boolean {
   const portUsed = port || DEFAULT_PORT
   try {
     if (wss) {
@@ -28,8 +29,8 @@ export function hostServer(port:number): boolean {
       const ip = request.socket.remoteAddress || request.headers['x-forwarded-for']
       handleClientConnected(ip)
 
+      ws.on('close', () => handleClientDisconnect(ip))
       ws.on('error', handleClientError)
-      ws.on('close', handleClientDisconnect)
       ws.on('message', handleClientMessage)
     })
 
@@ -45,7 +46,7 @@ export function stopServer(): void {
     console.log('⚠️  No server running')
     return
   }
-  
+
   wss.close(() => {
     console.log('❌ Server Closed')
     wss = null
@@ -61,16 +62,20 @@ function handleClientError(_error: Error): void {
   // TODO: Implement client error handling
 }
 
-function handleClientDisconnect(): void {
-  // TODO: Implement client disconnect handling
+function handleClientDisconnect(ip: string): void {
+  console.log('Client disconnected ' + ip)
+  removeIpFromConnectedList(ip)
+  console.log(connectedUsersIps)
 }
 
 function handleClientConnected(ip: string) {
   console.log('🔗 New client connected: ' + ip)
-  const parseip = ip.substring(7);
-  
+  const parseip = ip.substring(7)
+  connectedUsersIps.push(ip)
+  console.log(connectedUsersIps)
+
   const connectedMessage = {
-    id:  uuidv4(),
+    id: uuidv4(),
     userId: 'system',
     userName: 'Sistema',
     userColor: '#6b7280',
@@ -109,4 +114,12 @@ export function getServerIpAddress(): string | null {
   }
 
   return null
+}
+
+const removeIpFromConnectedList = (ip: string) => {
+  for (let i = connectedUsersIps.length - 1; i >= 0; i--) {
+    if (connectedUsersIps[i] === ip) {
+      connectedUsersIps.splice(i, 1)
+    }
+  }
 }
