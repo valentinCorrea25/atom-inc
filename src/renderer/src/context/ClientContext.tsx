@@ -40,12 +40,6 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       setClientIp(ip)
       setClientColor(getFromLocalStorage('color') || '#fff')
       setClientName(getFromLocalStorage('name') || 'Device')
-
-      const autoConnectIP = getFromLocalStorage('settings-autoConnectIP')
-      if (autoConnectIP) {
-        console.log('autoconnect ip');
-        connectToServer(autoConnectIP)
-      }
     }
     if (!hasMounted) {
       hasMounted = true
@@ -81,7 +75,7 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
         console.log(evt)
 
         setIsConnectedToServer(false)
-        alert('Unable to Connect')
+        alert(`Unable to Connect to ${serverIp}`)
       }
     } catch (error) {
       alert(error)

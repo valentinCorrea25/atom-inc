@@ -5,6 +5,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { getServerIpAddress, hostServer, stopServer } from './lib/websocket'
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+
+
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,

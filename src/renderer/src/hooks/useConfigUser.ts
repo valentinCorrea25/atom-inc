@@ -20,7 +20,7 @@ export const useConfigUser = () => {
   const [config, setConfig] = useState<UserConfig>({
     openOnStartup: false,
     connectOnStartup: false,
-    autoConnectToIP: true,
+    autoConnectToIP: false,
     autoConnectIP: '',
     autoConnectPort: '9853',
     startAsServer: false,
@@ -30,14 +30,27 @@ export const useConfigUser = () => {
 
   const clientContext = useContext(ClientContext)
 
+  //! Refactorizar todo a aun archivo configurable y no asi de tosco
+
+  // const example = {
+  //   localstorageRoute: 'setting-asdasd',
+  //   value: ''
+  // }
+
   const loadConfig = () => {
+    const openOnStartup = getFromLocalStorage('settings-openOnStartup') === 'true'
+    const connectOnStartup = getFromLocalStorage('settings-connectOnStartup') === 'true'
+    const startAsServer = getFromLocalStorage('settings-startAsServer') === 'true'
+    
+    const autoConnectToIP = startAsServer ? false : (getFromLocalStorage('settings-autoConnectToIP') !== 'false')
+    
     const loadedConfig: UserConfig = {
-      openOnStartup: getFromLocalStorage('settings-openOnStartup') === 'true',
-      connectOnStartup: getFromLocalStorage('settings-connectOnStartup') === 'true',
-      autoConnectToIP: getFromLocalStorage('settings-autoConnectToIP') !== 'false',
+      openOnStartup,
+      connectOnStartup,
+      autoConnectToIP,
       autoConnectIP: getFromLocalStorage('settings-autoConnectIP') || '',
       autoConnectPort: getFromLocalStorage('settings-autoConnectPort') || '9853',
-      startAsServer: getFromLocalStorage('settings-startAsServer') === 'true',
+      startAsServer,
       deviceName: getFromLocalStorage('name') || 'Device',
       deviceColor: getFromLocalStorage('color') || '#ffffff'
     }
@@ -47,27 +60,39 @@ export const useConfigUser = () => {
   }
 
   const saveConfig = (newConfig: UserConfig) => {
-    // Save initial configurations
-    setToLocalStorage('settings-openOnStartup', newConfig.openOnStartup.toString())
-    setToLocalStorage('settings-connectOnStartup', newConfig.connectOnStartup.toString())
-    setToLocalStorage('settings-autoConnectToIP', newConfig.autoConnectToIP.toString())
-    setToLocalStorage('settings-autoConnectIP', newConfig.autoConnectIP)
-    setToLocalStorage('settings-autoConnectPort', newConfig.autoConnectPort)
-    setToLocalStorage('settings-startAsServer', newConfig.startAsServer.toString())
+    let configToSave = { ...newConfig }
+    
+    if (configToSave.startAsServer) {
+      configToSave.autoConnectToIP = false
+    } else if (configToSave.autoConnectToIP) {
+      configToSave.startAsServer = false
+    }
 
-    // Save personalization settings
-    setToLocalStorage('name', newConfig.deviceName)
-    setToLocalStorage('color', newConfig.deviceColor)
+    setToLocalStorage('settings-openOnStartup', configToSave.openOnStartup.toString())
+    setToLocalStorage('settings-connectOnStartup', configToSave.connectOnStartup.toString())
+    setToLocalStorage('settings-autoConnectToIP', configToSave.autoConnectToIP.toString())
+    
+    if (configToSave.autoConnectToIP) {
+      setToLocalStorage('settings-autoConnectIP', configToSave.autoConnectIP)
+      setToLocalStorage('settings-autoConnectPort', configToSave.autoConnectPort)
+    } else {
+      setToLocalStorage('settings-autoConnectIP', '')
+      setToLocalStorage('settings-autoConnectPort', '9853')
+    }
+    
+    setToLocalStorage('settings-startAsServer', configToSave.startAsServer.toString())
 
-    // Update context if available
+    setToLocalStorage('name', configToSave.deviceName)
+    setToLocalStorage('color', configToSave.deviceColor)
+
     if (clientContext?.setClientName) {
-      clientContext.setClientName(newConfig.deviceName)
+      clientContext.setClientName(configToSave.deviceName)
     }
     if (clientContext?.setClientColor) {
-      clientContext.setClientColor(newConfig.deviceColor)
+      clientContext.setClientColor(configToSave.deviceColor)
     }
 
-    setConfig(newConfig)
+    setConfig(configToSave)
   }
 
   const updateConfig = (updates: Partial<UserConfig>) => {

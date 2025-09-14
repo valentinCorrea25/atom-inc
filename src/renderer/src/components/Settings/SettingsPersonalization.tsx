@@ -59,10 +59,7 @@ const SettingsPersonalization: React.FC<SettingsPersonalizationProps> = ({ confi
               className="flex-1"
             />
           </div>
-          <div
-            className="mt-2 w-full h-8 rounded border border-[#333333]"
-            style={{ backgroundColor: config.deviceColor }}
-          />
+        
         </div>
       </CardContent>
     </Card>

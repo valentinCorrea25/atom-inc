@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react'
+import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react'
 import { ClientContext } from './ClientContext'
 import { getFromLocalStorage } from '@renderer/lib/utils'
 
@@ -32,16 +32,6 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
   }: any = clientContext
 
   useEffect(() => {
-    if (clientIp) {
-      const connectOnStartup = getFromLocalStorage('settings-connectOnStartup')
-      const startAsServer = getFromLocalStorage('settings-startAsServer')
-      if (connectOnStartup && startAsServer) {
-        startHostServer()
-      }
-    }
-  }, [clientIp])
-
-  useEffect(() => {
     if (!isConnectedToServer) {
       stopHostServer()
     }
@@ -71,6 +61,31 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
       setIsServerUp(false)
     }
   }
+
+  useEffect(() => {
+    if (!clientIp) return
+    
+    const connectOnStartup = getFromLocalStorage('settings-connectOnStartup') === 'true'
+    if (!connectOnStartup) return
+
+    const startAsServer = getFromLocalStorage('settings-startAsServer') === 'true'
+    const autoConnectToIP = startAsServer ? false : (getFromLocalStorage('settings-autoConnectToIP') !== 'false')
+    
+    alert(connectOnStartup + ' connectOnStartup')
+    alert(startAsServer + ' startAsServer')
+    alert(autoConnectToIP + ' autoConnectToIP')
+
+    if (startAsServer) {
+      startHostServer()
+    } else if (autoConnectToIP) {
+      const autoconnect_ipAddress = getFromLocalStorage('settings-autoConnectIP')
+      const autoconnect_port = getFromLocalStorage('settings-autoConnectPort')
+      
+      if (autoconnect_ipAddress && autoconnect_port) {
+        connectToServer(`${autoconnect_ipAddress}:${autoconnect_port}`)
+      }
+    }
+  }, [clientIp])
 
   return (
     <HostContext.Provider
