@@ -1,7 +1,6 @@
 import { Button } from './ui/CustomComponents';
 import {
   HamburgerMenuIcon as Menu,
-  
 } from '@radix-ui/react-icons'
 
 const MessageAreaHeader = ({setIsSidebarCollapsed, isSidebarCollapsed}) => {

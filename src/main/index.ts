@@ -4,8 +4,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 //@ts-expect-error
 import icon from '../../resources/icon.png'
 import { getServerIpAddress, hostServer, stopServer } from './lib/websocket'
+import { startQFTPprocess } from './lib/QFTP/qftp'
+import { selectFile } from './lib/utils'
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
-
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -45,6 +46,8 @@ app.whenReady().then(() => {
   ipcMain.handle('websocket:startServer', (_, port) => handleStartServer(port))
   ipcMain.handle('websocket:stopServer', handleStopServer)
   ipcMain.handle('client:getIp', getServerIpAddress)
+  ipcMain.handle('client:startDowloadFileFromUser', (_, ip) => startQFTPprocess(ip))
+  ipcMain.handle('client:selectFile', selectFile)
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -59,17 +62,32 @@ app.whenReady().then(() => {
   })
 })
 
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
-function handleStartServer(port:number) {
+function handleStartServer(port: number) {
   return hostServer(port)
 }
 
 function handleStopServer() {
   return stopServer()
 }
+
+// ipcMain.handle('select-file', async (): Promise<MetaDataFile | null> => {
+//   const result = await dialog.showOpenDialog({ properties: ['openFile'] })
+//   if (result.canceled || result.filePaths.length === 0) return null
+
+//   const filePath = result.filePaths[0]
+//   const stats = fs.statSync(filePath)
+
+//   const meta: metaDataFile = {
+//     name: path.basename(filePath),
+//     path: filePath,
+//     size: stats.size
+//   }
+
+//   return meta
+// })

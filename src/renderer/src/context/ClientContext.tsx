@@ -1,4 +1,4 @@
-import { Message } from '@renderer/env'
+import { Message, MetaDataFile } from '../../../types'
 import { getFromLocalStorage } from '@renderer/lib/utils'
 import { createContext, useState, ReactNode, useRef, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -8,6 +8,7 @@ interface ClientContextType {
   disconnectFromServer: () => Promise<void>
   sendMessageToServer: (message: string) => void
   sendFileToServer: (file: File) => void
+  startDowloadFileFromUser: (metadata: MetaDataFile, from: string) => Promise<void>
   clientIp: string
   setLoading: (value: boolean) => void
   loading: boolean
@@ -125,8 +126,9 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
     }
   }
 
-  const sendFileToServer = (file: File) => {
-    console.log(file)
+  const sendFileToServer = async () => {
+    const metaData: MetaDataFile = await window.client.selectFile()
+    if (!metaData) return
 
     setLoading(true)
     try {
@@ -140,9 +142,10 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
         userIp: clientIp,
         userName: clientName,
         userColor: clientColor,
-        content: `Archivo compartido: ${file.name}`,
-        fileName: file.name,
-        fileSize: file.size
+        content: ``,
+        fileName: metaData.name,
+        fileSize: metaData.size,
+        filePath: metaData.path
       }
       //@ts-expect-error
       connectionWebSocketRef.current.send(JSON.stringify(msg))
@@ -151,6 +154,26 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const startDowloadFileFromUser = async (metadata: MetaDataFile) => {
+    const port = await window.client.startDowloadFileFromUser()
+    console.log(port);
+    
+    if (!port) return alert('could not create server for transfer file')
+
+    const msg: Message = {
+      type: 'transfer',
+      id: uuidv4(),
+      timestamp: new Date(),
+      userIp: clientIp + ':' + port,
+      userName: clientName,
+      userColor: clientColor,
+      content: '',
+      filePath: metadata.path
+    }
+    //@ts-expect-error
+    connectionWebSocketRef.current.send(JSON.stringify(msg))
   }
 
   return (
@@ -164,6 +187,7 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
         setClientName,
         setMessages,
         sendFileToServer,
+        startDowloadFileFromUser,
         clientIp,
         loading,
         isConnectedToServer,

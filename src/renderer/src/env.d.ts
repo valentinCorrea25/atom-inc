@@ -8,18 +8,6 @@ interface User {
   isOnline: boolean
 }
 
-interface Message {
-  id: string
-  userId: string
-  userName: string
-  userColor: string
-  content: string
-  timestamp: Date
-  type: 'message' | 'file' | 'system'
-  fileName?: string
-  fileSize?: number
-}
-
 interface Window {
   websocket: {
     hostServer: () => Promise<string>

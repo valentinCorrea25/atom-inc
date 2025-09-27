@@ -99,9 +99,7 @@ function handleClientMessage(msg: any): void {
 
 function sendMessageToAllUsers(message: Message, wss: WebSocketServer) {
   wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      console.log(message);
-      
+    if (client.readyState === WebSocket.OPEN) {      
       client.send(JSON.stringify(message))
     }
   })

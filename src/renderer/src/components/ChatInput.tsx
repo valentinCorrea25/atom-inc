@@ -8,8 +8,7 @@ const ChatInput = ({
   newMessage,
   setNewMessage,
   handleKeyPress,
-  handleFileSelect,
-  fileInputRef,
+  sendFileToServer,
   handleSendMessage
 }) => {
   const { isConnectedToServer }: any = useContext(ClientContext)
@@ -26,9 +25,9 @@ const ChatInput = ({
           className="flex-1 text-white border-[var(--border-color)] bg-[var(--bg-d-color)]"
           maxLength={500}
         />
-        <input ref={fileInputRef} type="file" onChange={handleFileSelect} className="hidden" />
+        {/* <input ref={fileInputRef} type="file" onChange={sendFileToServer} className="hidden" /> */}
         <Button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={async () => await sendFileToServer()}
           variant="outline"
           disabled={!isConnectedToServer}
           style={{ borderColor: 'rgb(102, 102, 102)', backgroundColor: 'rgb(102, 102, 102)' }}

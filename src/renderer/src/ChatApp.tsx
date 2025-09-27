@@ -2,7 +2,7 @@
 import type React from 'react'
 import { useState, useRef, useEffect, useContext } from 'react'
 import Aside from './components/Aside/Aside'
-import MessageArea from './components/MessageArea'
+import MessageArea from './components/MessageArea/MessageArea'
 import MessageAreaHeader from './components/MessageAreaHeader'
 import ChatInput from './components/ChatInput'
 import { ClientContext } from './context/ClientContext'
@@ -12,7 +12,6 @@ export default function ChatApp() {
   const [isDragging, setIsDragging] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const { sendMessageToServer, messages, sendFileToServer }: any = useContext(ClientContext)
 
   const scrollToBottom = () => {
@@ -40,7 +39,7 @@ export default function ChatApp() {
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-        await sendFileToServer(file);
+        // await sendFileToServer(file);
         setNewMessage('');
     }
   }
@@ -61,7 +60,7 @@ export default function ChatApp() {
     const files = Array.from(e.dataTransfer.files)
     if (files.length > 0) {
       //! por el momento
-      await sendFileToServer(files[0]);
+      // await sendFileToServer(files[0]);
     } 
   }
 
@@ -98,8 +97,7 @@ export default function ChatApp() {
           newMessage={newMessage}
           setNewMessage={setNewMessage}
           handleKeyPress={handleKeyPress}
-          handleFileSelect={handleFileSelect}
-          fileInputRef={fileInputRef}
+          sendFileToServer={sendFileToServer}
           handleSendMessage={handleSendMessage}
         />
       </div>

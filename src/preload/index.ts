@@ -6,8 +6,7 @@ contextBridge.exposeInMainWorld('websocket', {
 })
 
 contextBridge.exposeInMainWorld('client', {
-  // connectToServer: () => ipcRenderer.invoke('client:connectToServer'),
-  // disconnectFromSever: () => ipcRenderer.invoke('client:disconnectFromSever'),
   getIp: () => ipcRenderer.invoke('client:getIp'),
-  // sendMessage: (message) => ipcRenderer.send('message', message),
+  selectFile:() => ipcRenderer.invoke('client:selectFile'),
+  startDowloadFileFromUser:(ip:string) => ipcRenderer.invoke('client:startDowloadFileFromUser', ip)
 })
