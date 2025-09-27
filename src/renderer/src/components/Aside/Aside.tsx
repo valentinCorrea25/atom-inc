@@ -10,8 +10,6 @@ const Aside = ({ isSidebarCollapsed, setIsSidebarCollapsed }: any) => {
     >
       <AsideHeader setIsSidebarCollapsed={setIsSidebarCollapsed} />
       <AsideConnectionComponent />
-
-      {/* <ConnectedUser users={users} /> */}
     </aside>
   )
 }

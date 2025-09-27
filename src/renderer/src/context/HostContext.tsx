@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react'
 import { ClientContext } from './ClientContext'
 import { getFromLocalStorage } from '@renderer/lib/utils'
 
@@ -70,10 +70,6 @@ const HostContextProvider = ({ children }: HostContextProviderProps) => {
 
     const startAsServer = getFromLocalStorage('settings-startAsServer') === 'true'
     const autoConnectToIP = startAsServer ? false : (getFromLocalStorage('settings-autoConnectToIP') !== 'false')
-    
-    alert(connectOnStartup + ' connectOnStartup')
-    alert(startAsServer + ' startAsServer')
-    alert(autoConnectToIP + ' autoConnectToIP')
 
     if (startAsServer) {
       startHostServer()

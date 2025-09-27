@@ -26,9 +26,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null
 
-  console.log(config);
-  
-
   return (
     <div
       onClick={onClose}

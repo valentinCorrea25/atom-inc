@@ -7,6 +7,7 @@ interface ClientContextType {
   connectToServer: (ip: string) => void
   disconnectFromServer: () => Promise<void>
   sendMessageToServer: (message: string) => void
+  sendFileToServer: (file: File) => void
   clientIp: string
   setLoading: (value: boolean) => void
   loading: boolean
@@ -124,20 +125,49 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
     }
   }
 
+  const sendFileToServer = (file: File) => {
+    console.log(file)
+
+    setLoading(true)
+    try {
+      if (!connectionWebSocketRef.current && connectionWebSocketRef.current != undefined) {
+        alert('Message cant be send, is not connected to any server')
+      }
+      const msg = {
+        type: 'file',
+        id: uuidv4(),
+        timestamp: new Date(),
+        userIp: clientIp,
+        userName: clientName,
+        userColor: clientColor,
+        content: `Archivo compartido: ${file.name}`,
+        fileName: file.name,
+        fileSize: file.size
+      }
+      //@ts-expect-error
+      connectionWebSocketRef.current.send(JSON.stringify(msg))
+    } catch (error) {
+      alert(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <ClientContext.Provider
       value={{
         connectToServer,
         disconnectFromServer,
         sendMessageToServer,
-        clientIp,
-        loading,
         setLoading,
-        isConnectedToServer,
         setClientColor,
         setClientName,
-        messages,
-        setMessages
+        setMessages,
+        sendFileToServer,
+        clientIp,
+        loading,
+        isConnectedToServer,
+        messages
       }}
     >
       {children}

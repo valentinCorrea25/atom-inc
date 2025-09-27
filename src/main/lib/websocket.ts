@@ -1,16 +1,17 @@
 import { networkInterfaces } from 'os'
 import { WebSocketServer, WebSocket } from 'ws'
 import { v4 as uuidv4 } from 'uuid'
+import { Message } from '../../types'
 
 const DEFAULT_PORT = 9853
 let wss: WebSocketServer | null = null
-const connectedUsersIps: string[] = []
+let connectedClients: any[] = []
 
 export function hostServer(port: number): boolean {
   const portUsed = port || DEFAULT_PORT
   try {
     if (wss) {
-      console.log('⚠️  Server already running, closing previous instance...')
+      console.log('Server already running, closing previous instance...')
       stopServer()
     }
 
@@ -18,25 +19,25 @@ export function hostServer(port: number): boolean {
     const ipAdd = getServerIpAddress()
 
     if (!ipAdd) {
-      console.error('❌ Could not determine server IP address')
+      console.error('Could not determine server IP address')
       return false
     }
 
-    console.log(`🛜 Server Hosted at: ${ipAdd}:${portUsed}`)
+    console.log(`Server Hosted at: ${ipAdd}:${portUsed}`)
 
     wss.on('error', handleServerError)
     wss.on('connection', function connection(ws: WebSocket, request) {
       const ip = request.socket.remoteAddress || request.headers['x-forwarded-for']
-      handleClientConnected(ip)
+      handleConnectClient(ws, ip)
 
-      ws.on('close', () => handleClientDisconnect(ip))
+      ws.on('close', () => handleDisconnectClient(ws))
       ws.on('error', handleClientError)
       ws.on('message', handleClientMessage)
     })
 
     return true
   } catch (error) {
-    console.error('❌ Failed to start server:', error)
+    console.error('Failed to start server:', error)
     return false
   }
 }
@@ -48,56 +49,12 @@ export function stopServer(): void {
   }
 
   wss.close(() => {
-    console.log('❌ Server Closed')
+    console.log('Server Closed')
     wss = null
   })
 }
 
-// Handler functions
-function handleServerError(_error: Error): void {
-  // TODO: Implement server error handling
-}
-
-function handleClientError(_error: Error): void {
-  // TODO: Implement client error handling
-}
-
-function handleClientDisconnect(ip: string): void {
-  console.log('Client disconnected ' + ip)
-  removeIpFromConnectedList(ip)
-  console.log(connectedUsersIps)
-}
-
-function handleClientConnected(ip: string) {
-  console.log('🔗 New client connected: ' + ip)
-  const parseip = ip.substring(7)
-  connectedUsersIps.push(ip)
-  console.log(connectedUsersIps)
-
-  const connectedMessage = {
-    id: uuidv4(),
-    userId: 'system',
-    userName: 'Sistema',
-    userColor: '#6b7280',
-    content: `${parseip} se ha conectado a la red`,
-    timestamp: new Date(),
-    type: 'system'
-  }
-  handleClientMessage(JSON.stringify(connectedMessage))
-}
-
-function handleClientMessage(msg: any): void {
-  const message = msg instanceof Buffer ? msg.toString('utf8') : msg
-
-  if (wss) {
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message)
-      }
-    })
-  }
-}
-
+//! Utils
 export function getServerIpAddress(): string | null {
   const nets = networkInterfaces()
 
@@ -116,10 +73,66 @@ export function getServerIpAddress(): string | null {
   return null
 }
 
-const removeIpFromConnectedList = (ip: string) => {
-  for (let i = connectedUsersIps.length - 1; i >= 0; i--) {
-    if (connectedUsersIps[i] === ip) {
-      connectedUsersIps.splice(i, 1)
+//! Handler functions
+function handleServerError(_error: Error): void {
+  // TODO: Implement server error handling
+}
+
+function handleClientError(_error: Error): void {
+  // TODO: Implement client error handling
+}
+
+function handleClientMessage(msg: any): void {
+  const rawMessage = msg instanceof Buffer ? msg.toString('utf8') : msg
+  const message: Message = JSON.parse(rawMessage)
+
+  if (wss) {
+    switch (message.type) {
+      case 'message':
+      case 'system':
+      case 'file':
+        sendMessageToAllUsers(message, wss)
+        break
     }
   }
+}
+
+function sendMessageToAllUsers(message: Message, wss: WebSocketServer) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      console.log(message);
+      
+      client.send(JSON.stringify(message))
+    }
+  })
+}
+
+function handleConnectClient(ws, ip) {
+  const parseid = ip.substring(7)
+  ws.ip = parseid
+  connectedClients.push(ws)
+  console.log('Client Connect: ' + parseid)
+  logClientsConnected()
+
+  const connectedMessage = {
+    id: uuidv4(),
+    userId: 'system',
+    userName: 'System',
+    userColor: '#6b7280',
+    content: `${parseid} has connected to the network`,
+    timestamp: new Date(),
+    type: 'system'
+  }
+  handleClientMessage(JSON.stringify(connectedMessage))
+}
+
+function handleDisconnectClient(ws) {
+  connectedClients = connectedClients.filter((check) => {
+    return check.ip != ws.ip
+  })
+  console.log('Client Disconnect: ' + ws.ip + '. ' + connectedClients.length + ' Online')
+}
+
+function logClientsConnected() {
+  console.log('Users Online: ' + connectedClients.length)
 }
