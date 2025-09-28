@@ -1,5 +1,3 @@
-import { MetaDataFile } from "../types"
-
 const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('websocket', {
@@ -11,5 +9,10 @@ contextBridge.exposeInMainWorld('client', {
   getIp: () => ipcRenderer.invoke('client:getIp'),
   selectFile:() => ipcRenderer.invoke('client:selectFile'),
   startDowloadFileFromUser:() => ipcRenderer.invoke('client:startDowloadFileFromUser'),
-  startSendFileToUser:(metaDataFile: MetaDataFile, to:string) => ipcRenderer.invoke('client:startSendFileToUser', metaDataFile, to)
+  startSendFileToUser:(path: string, to:string) => ipcRenderer.invoke('client:startSendFileToUser', path, to)
+})
+
+
+contextBridge.exposeInMainWorld("main", {
+  onAlert: (callback) => ipcRenderer.on("alert", (_, data) => callback(data))
 })

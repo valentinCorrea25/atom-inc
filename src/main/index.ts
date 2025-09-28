@@ -6,11 +6,12 @@ import icon from '../../resources/icon.png'
 import { getServerIpAddress, hostServer, stopServer } from './lib/websocket'
 import { startQFTPprocess, startSendFileToUserQFTP } from './lib/QFTP/qftp'
 import { selectFile } from './lib/utils'
-import { MetaDataFile } from '../types'
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
+
+let mainWindow: BrowserWindow;
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     minWidth: 400,
@@ -50,7 +51,7 @@ app.whenReady().then(() => {
 
   //qftp
   ipcMain.handle('client:startDowloadFileFromUser', () => startQFTPprocess())
-  ipcMain.handle('client:startSendFileToUser', (_, metaDataFile: MetaDataFile, to:string) => startSendFileToUserQFTP(metaDataFile, to))
+  ipcMain.handle('client:startSendFileToUser', (_, path: string, to:string) => startSendFileToUserQFTP(path, to))
   ipcMain.handle('client:selectFile', selectFile)
 
   app.on('browser-window-created', (_, window) => {
@@ -78,6 +79,10 @@ function handleStartServer(port: number) {
 
 function handleStopServer() {
   return stopServer()
+}
+
+export function sendAlertToClient(message:string){
+  mainWindow.webContents.send("alert", { message })
 }
 
 // ipcMain.handle('select-file', async (): Promise<MetaDataFile | null> => {

@@ -10,7 +10,7 @@ let metaName: string
 let metaSize: number
 let metaPath: string
 
-export default async function startClientForQFTP(metaDataFile: MetaDataFile, to: string) {
+export default async function startClientForQFTP(path: string, to: string) {
   const completeHost = to.split(':')
   const host = completeHost[0]
   const port = completeHost[1]
@@ -23,7 +23,7 @@ export default async function startClientForQFTP(metaDataFile: MetaDataFile, to:
   try {
     client = net.createConnection({ port: parseInt(port), host: host }, () => {
       console.log('sending meta')
-      sendFileMetadata(metaDataFile)
+      sendFileMetadata(path)
     })
     console.log(client);
     
@@ -48,14 +48,14 @@ export default async function startClientForQFTP(metaDataFile: MetaDataFile, to:
   }
 }
 
-async function sendFileMetadata(metaDataFile: MetaDataFile) {
+async function sendFileMetadata(pathFile: string) {
   try {
-    const stats = await fs.promises.stat(metaDataFile.path)
-    const fileName = path.basename(metaDataFile.path)
+    const stats = await fs.promises.stat(pathFile)
+    const fileName = path.basename(pathFile)
 
     metaName = fileName
     metaSize = stats.size
-    metaPath = metaDataFile.path
+    metaPath = pathFile
     isWaitingToSend = true
 
     const metadata = {

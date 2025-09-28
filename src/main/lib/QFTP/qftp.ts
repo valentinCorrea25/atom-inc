@@ -29,8 +29,8 @@ export async function startQFTPprocess(saveFolder?:string){
     return startServerForQFTP(saveFolder || SAVE_FOLDER);
 }
 
-export async function startSendFileToUserQFTP(metaDataFile: MetaDataFile, to:string){
-    return startClientForQFTP(metaDataFile, to);
+export async function startSendFileToUserQFTP(path: string, to:string){
+    return startClientForQFTP(path, to);
 }
 
 

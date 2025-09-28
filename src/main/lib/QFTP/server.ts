@@ -1,6 +1,6 @@
 import net, { Socket } from 'node:net'
 import fs from 'node:fs'
-
+import { sendAlertToClient } from '../..'
 
 const DEFAULT_PORT = 9854 // ! this should be configurable
 
@@ -27,7 +27,7 @@ export default function startServerForQFTP(saveFolder: string) {
   })
 
   server.listen(DEFAULT_PORT, () => {
-    console.log('Ready to connect to QFTP. PORT: ' + DEFAULT_PORT)
+    console.log('Ready to connect QFTP. PORT: ' + DEFAULT_PORT)
   })
 
   return DEFAULT_PORT
@@ -42,6 +42,7 @@ function readStreamRecived(data: Buffer) {
   writeStream.write(data)
   receivedBytes += data.length
   if (receivedBytes >= fileMetaSize) {
+    sendAlertToClient(`File: ${fileMetaName} recived. Saved on ${SAVE_FOLDER}`)
     writeStream.end()
     emptyMetaData()
   }

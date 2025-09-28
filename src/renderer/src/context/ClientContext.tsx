@@ -43,6 +43,10 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       setClientColor(getFromLocalStorage('color') || '#fff')
       setClientName(getFromLocalStorage('name') || 'Device')
     }
+    window.main.onAlert(({ message }: any) => {
+      alert(message)
+    })
+    
     if (!hasMounted) {
       hasMounted = true
       fetchIp()
@@ -185,24 +189,16 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       to: metadata.from
     }
 
-    console.log(msg);
-    
+    console.log(msg)
+
     //@ts-expect-error
     connectionWebSocketRef.current.send(JSON.stringify(msg))
   }
 
   const startSendFileToUser = async (msg: Message) => {
-    if(!msg.fileName || !msg.filePath || !msg.fileSize) return
-
-    const metadata: MetaDataFile = {
-      name: msg.fileName,
-      path: msg.filePath,
-      size: parseInt(msg.fileSize),
-    }
-
-    await window.client.startSendFileToUser(metadata, msg.userIp);
-
-  } 
+    if (!msg.filePath) return
+    await window.client.startSendFileToUser(msg.filePath, msg.userIp)
+  }
 
   return (
     <ClientContext.Provider
