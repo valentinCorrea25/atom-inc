@@ -15,11 +15,14 @@ declare global {
       getIp: () => Promise<string>
       sendMessage: (message) => () => void
       startDowloadFileFromUser: () => Promise<string>
-      startSendFileToUser: (path: strign, to:string) => Promise<void>
+      startSendFileToUser: (path: string, to:string) => Promise<void>
       selectFile: () => Promise<MetaDataFile>
     }
     main: {
       onAlert: (callback: (message: string) => void) => void
+    }
+    config: {
+      toggleAutoStart: (enable:boolean) => void;
     }
   }
 }

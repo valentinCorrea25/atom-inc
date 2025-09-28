@@ -140,6 +140,17 @@ function handleDisconnectClient(ws) {
     return check.ip != ws.ip
   })
   console.log('Client Disconnect: ' + ws.ip + '. ' + connectedClients.length + ' Online')
+
+  const connectedMessage = {
+    id: uuidv4(),
+    userId: 'system',
+    userName: 'System',
+    userColor: '#6b7280',
+    content: `${ws.ip} has disconnected from the newtwork to the network`,
+    timestamp: new Date(),
+    type: 'system'
+  }
+  handleClientMessage(JSON.stringify(connectedMessage))
 }
 
 function logClientsConnected() {

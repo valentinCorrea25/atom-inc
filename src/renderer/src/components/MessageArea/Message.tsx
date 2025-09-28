@@ -4,21 +4,23 @@ import TextMessage from './MessageTypes/TextMessage'
 import FileMessage from './MessageTypes/FileMessage'
 import { Message as MessageType } from 'src/types'
 
-const Message = ({ message, handleStartDownload } : {message:MessageType, handleStartDownload?:any}) => {
+const Message = ({
+  message,
+  handleStartDownload,
+  fromCurrenUser
+}: {
+  message: MessageType
+  fromCurrenUser: boolean
+  handleStartDownload?: any
+}) => {
   const messageComponents = {
     system: () => <SystemMessage content={message.content} />,
-    text: () => (
-      <TextMessage
-        content={message.content}
-        userName={message.userName}
-        userColor={message.userColor}
-        timestamp={message.timestamp}
-      />
-    ),
+    text: () => <TextMessage message={message} />,
     file: () => (
       <FileMessage
         message={message}
         handleStartDownload={handleStartDownload}
+        fromCurrenUser={fromCurrenUser}
       />
     )
   }
@@ -32,11 +34,14 @@ const Message = ({ message, handleStartDownload } : {message:MessageType, handle
   )
 }
 
-export const MessageHeader = ({ userName, userColor, timestamp }) => (
+export const MessageHeader = ({ userName, userColor, timestamp, userIp }) => (
   <div className="flex items-center gap-2 mb-1">
-    <span className="font-medium text-sm" style={{ color: userColor }}>
-      {userName}
-    </span>
+    <div className="flex gap-2 items-center">
+      <span className="font-medium text-sm" style={{ color: userColor }}>
+        {userName}
+      </span>
+      <span className="text-xs">({userIp})</span>
+    </div>
     <span className="text-xs" style={{ color: 'rgb(153, 153, 153)' }}>
       {formatTime(new Date(timestamp))}
     </span>

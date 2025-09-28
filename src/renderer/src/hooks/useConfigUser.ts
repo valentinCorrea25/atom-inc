@@ -10,7 +10,7 @@ interface UserConfig {
   autoConnectIP: string
   autoConnectPort: string
   startAsServer: boolean
-  
+
   // Personalization
   deviceName: string
   deviceColor: string
@@ -41,9 +41,11 @@ export const useConfigUser = () => {
     const openOnStartup = getFromLocalStorage('settings-openOnStartup') === 'true'
     const connectOnStartup = getFromLocalStorage('settings-connectOnStartup') === 'true'
     const startAsServer = getFromLocalStorage('settings-startAsServer') === 'true'
-    
-    const autoConnectToIP = startAsServer ? false : (getFromLocalStorage('settings-autoConnectToIP') !== 'false')
-    
+
+    const autoConnectToIP = startAsServer
+      ? false
+      : getFromLocalStorage('settings-autoConnectToIP') !== 'false'
+
     const loadedConfig: UserConfig = {
       openOnStartup,
       connectOnStartup,
@@ -54,24 +56,25 @@ export const useConfigUser = () => {
       deviceName: getFromLocalStorage('name') || 'Device',
       deviceColor: getFromLocalStorage('color') || '#ffffff'
     }
-    
+
     setConfig(loadedConfig)
     return loadedConfig
   }
 
   const saveConfig = (newConfig: UserConfig) => {
     let configToSave = { ...newConfig }
-    
+
     if (configToSave.startAsServer) {
       configToSave.autoConnectToIP = false
     } else if (configToSave.autoConnectToIP) {
       configToSave.startAsServer = false
     }
 
+    window.config.toggleAutoStart(configToSave.openOnStartup)
     setToLocalStorage('settings-openOnStartup', configToSave.openOnStartup.toString())
     setToLocalStorage('settings-connectOnStartup', configToSave.connectOnStartup.toString())
     setToLocalStorage('settings-autoConnectToIP', configToSave.autoConnectToIP.toString())
-    
+
     if (configToSave.autoConnectToIP) {
       setToLocalStorage('settings-autoConnectIP', configToSave.autoConnectIP)
       setToLocalStorage('settings-autoConnectPort', configToSave.autoConnectPort)
@@ -79,7 +82,7 @@ export const useConfigUser = () => {
       setToLocalStorage('settings-autoConnectIP', '')
       setToLocalStorage('settings-autoConnectPort', '9853')
     }
-    
+
     setToLocalStorage('settings-startAsServer', configToSave.startAsServer.toString())
 
     setToLocalStorage('name', configToSave.deviceName)

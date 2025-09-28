@@ -14,7 +14,7 @@ const MessageArea = ({
   messagesEndRef
 }) => {
   //@ts-expect-error
-  const { isConnectedToServer, loading, startDowloadFileFromUser:handleStartDownload } = useContext(ClientContext)
+  const { isConnectedToServer, loading, startDowloadFileFromUser:handleStartDownload, clientIp } = useContext(ClientContext)
 
   // Determinar qué contenido mostrar
   const renderContent = () => {
@@ -29,7 +29,12 @@ const MessageArea = ({
     return (
       <>
         {messages.map((message) => (
-          <Message key={message.id} message={message} handleStartDownload={handleStartDownload}/>
+          <Message 
+            key={message.id} 
+            message={message} 
+            handleStartDownload={handleStartDownload}
+            fromCurrenUser={clientIp == message.userIp}
+          />
         ))}
         <div ref={messagesEndRef} />
       </>

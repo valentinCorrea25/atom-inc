@@ -16,3 +16,7 @@ contextBridge.exposeInMainWorld('client', {
 contextBridge.exposeInMainWorld("main", {
   onAlert: (callback) => ipcRenderer.on("alert", (_, data) => callback(data))
 })
+
+contextBridge.exposeInMainWorld("config", {
+  toggleAutoStart: (enable:boolean) => ipcRenderer.invoke('config:toggleAutoStart', enable),
+})

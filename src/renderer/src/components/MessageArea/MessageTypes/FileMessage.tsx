@@ -8,10 +8,12 @@ import { Message } from 'src/types'
 type FileMessageProps = {
   message: Message
   handleStartDownload?: (MetaDataFile) => void
+  fromCurrenUser: boolean
 }
 
-const FileMessage = ({ message, handleStartDownload }: FileMessageProps) => {
+const FileMessage = ({ message, handleStartDownload, fromCurrenUser }: FileMessageProps) => {
   const { userName, userColor, timestamp, fileSize, fileName, filePath, userIp } = message
+
   if (!fileName || !fileSize || !filePath) return
 
   return (
@@ -30,7 +32,7 @@ const FileMessage = ({ message, handleStartDownload }: FileMessageProps) => {
                 </p>
               )}
             </div>
-            <Button
+            {!fromCurrenUser && <Button
               variant="outline"
               className="hover:bg-opacity-20 bg-transparent"
               onClick={() =>
@@ -38,12 +40,12 @@ const FileMessage = ({ message, handleStartDownload }: FileMessageProps) => {
                   name: fileName,
                   path: filePath,
                   size: Number(fileSize),
-                  from:  userIp
+                  from: userIp
                 })
               }
             >
               <DownloadIcon className="w-4 h-4" />
-            </Button>
+            </Button>}
           </div>
         </Card>
       </div>

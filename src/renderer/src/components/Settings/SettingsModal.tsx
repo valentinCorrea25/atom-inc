@@ -37,7 +37,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       >
         <SettingsHeader onClose={onClose} />
 
-        <div className="p-6 space-y-6">
+        <div className="px-6 space-y-6">
           <SettingsInitialConfig config={config} updateConfig={updateConfig} />
           <SettingsPersonalization config={config} updateConfig={updateConfig} />
         </div>

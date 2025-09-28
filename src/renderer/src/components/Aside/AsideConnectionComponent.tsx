@@ -89,8 +89,14 @@ const ClientOptions = () => {
     disconnectFromServer()
   }
 
+  const handleKeyDownEnter = (e) => {
+    if (e.key === 'Enter') {
+      isConnectedToServer ? handleDisconnectFromServer() : handleConnectToServer()
+    }
+  }
+
   return (
-    <div className="p-4 border-b border-[var(--border-color)]">
+    <div className="p-4 border-b border-[var(--border-color)]" onKeyDown={handleKeyDownEnter}>
       <div className="mb-4">
         <label className="text-sm mb-2 block" style={{ color: 'rgb(153, 153, 153)' }}>
           Connect To

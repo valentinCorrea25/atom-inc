@@ -11,7 +11,7 @@ const SettingsHeader: React.FC<SettingsHeaderProps> = ({ onClose }) => {
     <div className="flex items-center justify-between p-6 border-b border-[#333333]">
       <div className="flex items-center gap-3">
         <Settings className="w-5 h-5 text-[#10b981]" />
-        <h2 className="text-xl font-semibold text-white">Configuration</h2>
+        <h2 className="text-xl font-semibold text-white">Settings</h2>
       </div>
       <Button variant="ghost" size="icon" onClick={onClose}>
         <X className="w-4 h-4" />
