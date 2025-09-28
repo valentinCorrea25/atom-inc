@@ -170,7 +170,8 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       userName: clientName,
       userColor: clientColor,
       content: '',
-      filePath: metadata.path
+      filePath: metadata.path,
+      to: metadata.from
     }
     //@ts-expect-error
     connectionWebSocketRef.current.send(JSON.stringify(msg))

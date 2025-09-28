@@ -93,16 +93,27 @@ function handleClientMessage(msg: any): void {
       case 'file':
         sendMessageToAllUsers(message, wss)
         break
+      case 'transfer':
+        sendMessageToUserByIpAddress(message, wss)
+        break
     }
   }
 }
 
 function sendMessageToAllUsers(message: Message, wss: WebSocketServer) {
   wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {      
+    if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(message))
     }
   })
+}
+
+function sendMessageToUserByIpAddress(message: Message, wss: WebSocketServer) {
+  const client = connectedClients.find((check) => {
+    return check.ip == message.to
+  })
+
+  client.send(JSON.stringify(message))
 }
 
 function handleConnectClient(ws, ip) {

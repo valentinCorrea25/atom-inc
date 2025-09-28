@@ -13,7 +13,7 @@ let receivedBytes: number
 
 let SAVE_FOLDER
 
-export default function startServerForQFTP(saveFolder: string, ipAddress:string) {
+export default function startServerForQFTP(saveFolder: string) {
   SAVE_FOLDER = saveFolder
 
   const server = net.createServer((socket: Socket) => {

@@ -25,10 +25,7 @@ if (os.platform() === 'win32') {
 // }
 
 export async function startQFTPprocess(ip:string, saveFolder?:string){
-    //! step 1 -> create the server
-    return startServerForQFTP(saveFolder || SAVE_FOLDER, ip);
-    //! step 2 --> contact device via the chat (web socket) on the client side
-
+    return startServerForQFTP(saveFolder || SAVE_FOLDER);
 }
 
 
