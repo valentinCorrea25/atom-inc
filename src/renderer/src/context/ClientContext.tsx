@@ -43,13 +43,14 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       setClientColor(getFromLocalStorage('color') || '#fff')
       setClientName(getFromLocalStorage('name') || 'Device')
     }
-    window.main.onAlert(({ message }: any) => {
-      alert(message)
-    })
-    
+
     if (!hasMounted) {
       hasMounted = true
       fetchIp()
+
+      window.main.onAlert(({ message }: any) => {
+        alert(message)
+      })
     }
   }, [])
 

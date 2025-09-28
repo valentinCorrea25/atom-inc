@@ -42,7 +42,7 @@ function readStreamRecived(data: Buffer) {
   writeStream.write(data)
   receivedBytes += data.length
   if (receivedBytes >= fileMetaSize) {
-    sendAlertToClient(`File: ${fileMetaName} recived. Saved on ${SAVE_FOLDER}`)
+    sendAlertToClient(`File: ${fileMetaName} recived succefully.\n\n Saved on ${SAVE_FOLDER}`)
     writeStream.end()
     emptyMetaData()
   }

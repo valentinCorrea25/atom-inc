@@ -1,7 +1,6 @@
 import net from 'node:net'
 import fs from 'node:fs'
 import path from 'node:path'
-import { MetaDataFile } from '../../../types'
 
 let client: net.Socket
 
@@ -17,8 +16,6 @@ export default async function startClientForQFTP(path: string, to: string) {
 
   if (!host || !port) return
 
-  console.log(host, port);
-  
 
   try {
     client = net.createConnection({ port: parseInt(port), host: host }, () => {
