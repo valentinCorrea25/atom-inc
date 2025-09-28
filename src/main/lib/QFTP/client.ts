@@ -17,11 +17,16 @@ export default async function startClientForQFTP(metaDataFile: MetaDataFile, to:
 
   if (!host || !port) return
 
+  console.log(host, port);
+  
+
   try {
     client = net.createConnection({ port: parseInt(port), host: host }, () => {
       console.log('sending meta')
       sendFileMetadata(metaDataFile)
     })
+    console.log(client);
+    
 
     client.on('data', (data) => {
       if (isWaitingToSend && isVerifiedFile(data)) {

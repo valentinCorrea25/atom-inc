@@ -169,7 +169,7 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
 
   const startDowloadFileFromUser = async (metadata: MetaDataFile) => {
     const port = await window.client.startDowloadFileFromUser()
-    console.log(port)
+    console.log(metadata)
 
     if (!port) return alert('could not create server for transfer file')
 
@@ -184,6 +184,9 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       filePath: metadata.path,
       to: metadata.from
     }
+
+    console.log(msg);
+    
     //@ts-expect-error
     connectionWebSocketRef.current.send(JSON.stringify(msg))
   }
@@ -195,7 +198,6 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
       name: msg.fileName,
       path: msg.filePath,
       size: parseInt(msg.fileSize),
-      
     }
 
     await window.client.startSendFileToUser(metadata, msg.userIp);

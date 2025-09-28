@@ -35,10 +35,10 @@ const FileMessage = ({ message, handleStartDownload }: FileMessageProps) => {
               className="hover:bg-opacity-20 bg-transparent"
               onClick={() =>
                 handleStartDownload?.({
-                  fileName,
-                  filePath,
-                  fileSize: Number(fileSize),
-                  from: userIp
+                  name: fileName,
+                  path: filePath,
+                  size: Number(fileSize),
+                  from:  userIp
                 })
               }
             >
