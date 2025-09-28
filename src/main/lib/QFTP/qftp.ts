@@ -1,6 +1,7 @@
 import startServerForQFTP from './server.js'
-import clientMode from './client.js'
-import { getServerIpAddress } from '../websocket.js';
+
+import { MetaDataFile } from '../../../types.js';
+import startClientForQFTP from './client.js';
 
 //## QFTP STANDS FOR Quick File Trasnfer Protocol ## ## ##
 
@@ -24,8 +25,12 @@ if (os.platform() === 'win32') {
 //   }
 // }
 
-export async function startQFTPprocess(ip:string, saveFolder?:string){
+export async function startQFTPprocess(saveFolder?:string){
     return startServerForQFTP(saveFolder || SAVE_FOLDER);
+}
+
+export async function startSendFileToUserQFTP(metaDataFile: MetaDataFile, to:string){
+    return startClientForQFTP(metaDataFile, to);
 }
 
 

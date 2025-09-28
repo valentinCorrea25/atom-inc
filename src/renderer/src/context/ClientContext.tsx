@@ -62,8 +62,17 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
 
       ws.onmessage = function (evt) {
         let msg = JSON.parse(evt.data)
-        setMessages((prev) => [...prev, msg])
-        console.log(msg)
+        switch (msg.type) {
+          case 'message':
+          case 'system':
+          case 'file':
+            setMessages((prev) => [...prev, msg])
+            break
+          case 'transfer':
+            console.log(msg)
+            startSendFileToUser(msg)
+            break
+        }
       }
 
       ws.onclose = function (evt) {
@@ -156,10 +165,12 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
     }
   }
 
+  // ! QFTP
+
   const startDowloadFileFromUser = async (metadata: MetaDataFile) => {
     const port = await window.client.startDowloadFileFromUser()
-    console.log(port);
-    
+    console.log(port)
+
     if (!port) return alert('could not create server for transfer file')
 
     const msg: Message = {
@@ -176,6 +187,20 @@ const ClientContextProvider = ({ children }: ClientContextProviderProps) => {
     //@ts-expect-error
     connectionWebSocketRef.current.send(JSON.stringify(msg))
   }
+
+  const startSendFileToUser = async (msg: Message) => {
+    if(!msg.fileName || !msg.filePath || !msg.fileSize) return
+
+    const metadata: MetaDataFile = {
+      name: msg.fileName,
+      path: msg.filePath,
+      size: parseInt(msg.fileSize),
+      
+    }
+
+    await window.client.startSendFileToUser(metadata, msg.userIp);
+
+  } 
 
   return (
     <ClientContext.Provider

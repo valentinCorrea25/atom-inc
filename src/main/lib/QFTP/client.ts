@@ -1,20 +1,26 @@
 import net from 'node:net'
 import fs from 'node:fs'
 import path from 'node:path'
+import { MetaDataFile } from '../../../types'
 
-const FILE_PATH = '/home/vale/Work/DoorDoorESP.nes'
-const DEFAULT_PORT = 9854;
 let client: net.Socket
 
 let isWaitingToSend = false
 let metaName: string
 let metaSize: number
+let metaPath: string
 
-export default async function clientMode(fileData: any, filePath: string, port:number, host:string) {
+export default async function startClientForQFTP(metaDataFile: MetaDataFile, to: string) {
+  const completeHost = to.split(':')
+  const host = completeHost[0]
+  const port = completeHost[1]
+
+  if (!host || !port) return
+
   try {
-    client = net.createConnection({ port: port, host: host }, () => {
+    client = net.createConnection({ port: parseInt(port), host: host }, () => {
       console.log('sending meta')
-      sendFileMetadata()
+      sendFileMetadata(metaDataFile)
     })
 
     client.on('data', (data) => {
@@ -37,13 +43,14 @@ export default async function clientMode(fileData: any, filePath: string, port:n
   }
 }
 
-async function sendFileMetadata() {
+async function sendFileMetadata(metaDataFile: MetaDataFile) {
   try {
-    const stats = await fs.promises.stat(FILE_PATH)
-    const fileName = path.basename(FILE_PATH)
+    const stats = await fs.promises.stat(metaDataFile.path)
+    const fileName = path.basename(metaDataFile.path)
 
     metaName = fileName
     metaSize = stats.size
+    metaPath = metaDataFile.path
     isWaitingToSend = true
 
     const metadata = {
@@ -60,7 +67,7 @@ async function sendFileMetadata() {
 
 async function sendFile() {
   try {
-    const readStream = fs.createReadStream(FILE_PATH)
+    const readStream = fs.createReadStream(metaPath)
     readStream.pipe(client)
 
     readStream.on('end', () => {

@@ -4,8 +4,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 //@ts-expect-error
 import icon from '../../resources/icon.png'
 import { getServerIpAddress, hostServer, stopServer } from './lib/websocket'
-import { startQFTPprocess } from './lib/QFTP/qftp'
+import { startQFTPprocess, startSendFileToUserQFTP } from './lib/QFTP/qftp'
 import { selectFile } from './lib/utils'
+import { MetaDataFile } from '../types'
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
 function createWindow(): void {
@@ -46,7 +47,10 @@ app.whenReady().then(() => {
   ipcMain.handle('websocket:startServer', (_, port) => handleStartServer(port))
   ipcMain.handle('websocket:stopServer', handleStopServer)
   ipcMain.handle('client:getIp', getServerIpAddress)
-  ipcMain.handle('client:startDowloadFileFromUser', (_, ip) => startQFTPprocess(ip))
+
+  //qftp
+  ipcMain.handle('client:startDowloadFileFromUser', () => startQFTPprocess())
+  ipcMain.handle('client:startSendFileToUser', (_, metaDataFile: MetaDataFile, to:string) => startSendFileToUserQFTP(metaDataFile, to))
   ipcMain.handle('client:selectFile', selectFile)
 
   app.on('browser-window-created', (_, window) => {

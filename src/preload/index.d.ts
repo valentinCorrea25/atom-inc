@@ -15,6 +15,7 @@ declare global {
       getIp: () => Promise<string>
       sendMessage: (message) => () => void
       startDowloadFileFromUser: () => Promise<string>
+      startSendFileToUser: (metaDataFile: MetaDataFile, to:string) => Promise<void>
       selectFile: () => Promise<MetaDataFile>
     }
   }
