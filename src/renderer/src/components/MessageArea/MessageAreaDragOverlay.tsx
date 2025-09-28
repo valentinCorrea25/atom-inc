@@ -1,4 +1,4 @@
-import { FileIcon as Paperclip, DownloadIcon } from '@radix-ui/react-icons'
+import { FileIcon as Paperclip } from '@radix-ui/react-icons'
 
 
 const DragOverlay = () => (

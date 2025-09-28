@@ -36,13 +36,13 @@ export default function ChatApp() {
     }
   }
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-        // await sendFileToServer(file);
-        setNewMessage('');
-    }
-  }
+  // const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0]
+  //   if (file) {
+  //       // await sendFileToServer(file);
+  //       setNewMessage('');
+  //   }
+  // }
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()

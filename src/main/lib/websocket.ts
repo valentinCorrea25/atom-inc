@@ -94,7 +94,7 @@ function handleClientMessage(msg: any): void {
         sendMessageToAllUsers(message, wss)
         break
       case 'transfer':
-        sendMessageToUserByIpAddress(message, wss)
+        sendMessageToUserByIpAddress(message)
         break
     }
   }
@@ -108,7 +108,7 @@ function sendMessageToAllUsers(message: Message, wss: WebSocketServer) {
   })
 }
 
-function sendMessageToUserByIpAddress(message: Message, wss: WebSocketServer) {
+function sendMessageToUserByIpAddress(message: Message) {
   const client = connectedClients.find((check) => {
     return check.ip == message.to
   })

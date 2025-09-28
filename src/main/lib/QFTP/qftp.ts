@@ -1,12 +1,12 @@
 import startServerForQFTP from './server.js'
-
-import { MetaDataFile } from '../../../types.js';
 import startClientForQFTP from './client.js';
+import path from 'path';
+import os from 'os';
+
 
 //## QFTP STANDS FOR Quick File Trasnfer Protocol ## ## ##
 
-const os = require('os');
-const path = require('path');
+
 
 let SAVE_FOLDER; //! this should be configurable
 
