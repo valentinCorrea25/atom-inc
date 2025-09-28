@@ -20,7 +20,7 @@ const FileMessage = ({ message, handleStartDownload, fromCurrenUser }: FileMessa
     <>
       <UserAvatar userName={userName} userColor={userColor} />
       <div className="flex-1">
-        <MessageHeader userName={userName} userColor={userColor} timestamp={timestamp} />
+        <MessageHeader userName={userName} userColor={userColor} timestamp={timestamp} userIp={userIp} />
         <Card className="p-3 max-w-sm border-[var(--border-color)] bg-[var(--bg-color)]">
           <div className="flex items-center gap-3">
             <Paperclip className="w-5 h-5" style={{ color: 'rgb(153, 153, 153)' }} />
