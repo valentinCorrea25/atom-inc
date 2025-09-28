@@ -13,10 +13,12 @@ let receivedBytes: number
 
 let SAVE_FOLDER
 
+let server: net.Server
+
 export default function startServerForQFTP(saveFolder: string) {
   SAVE_FOLDER = saveFolder
 
-  const server = net.createServer((socket: Socket) => {
+  server = net.createServer((socket: Socket) => {
     socket.on('data', (data: Buffer) => {
       if (!isWaitingData) {
         setMetaData(data, socket)
@@ -44,6 +46,7 @@ function readStreamRecived(data: Buffer) {
   if (receivedBytes >= fileMetaSize) {
     sendAlertToClient(`File: ${fileMetaName} recived succefully.\n\n Saved on ${SAVE_FOLDER}`)
     writeStream.end()
+    server.close()
     emptyMetaData()
   }
 }

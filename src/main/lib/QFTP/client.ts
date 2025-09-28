@@ -16,14 +16,12 @@ export default async function startClientForQFTP(path: string, to: string) {
 
   if (!host || !port) return
 
-
   try {
     client = net.createConnection({ port: parseInt(port), host: host }, () => {
       console.log('sending meta')
       sendFileMetadata(path)
     })
-    console.log(client);
-    
+    console.log(client)
 
     client.on('data', (data) => {
       if (isWaitingToSend && isVerifiedFile(data)) {
@@ -74,7 +72,8 @@ async function sendFile() {
 
     readStream.on('end', () => {
       console.log('File sent')
-      client.end()
+      client.end();
+      client.destroy()
     })
   } catch (err) {
     console.log('Error:', err)

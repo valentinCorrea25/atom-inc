@@ -25,16 +25,16 @@ const SettingsPersonalization: React.FC<SettingsPersonalizationProps> = ({ confi
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Personalización</CardTitle>
+        <CardTitle className="text-lg">Personalization</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Device Name */}
         <div>
           <label className="text-sm font-medium text-white mb-2 block">
-            Nombre del dispositivo
+            Device Name
           </label>
           <Input
-            placeholder="Mi Dispositivo"
+            placeholder="Device Name"
             value={config.deviceName}
             onChange={(e) => updateConfig({ deviceName: e.target.value })}
           />
@@ -43,7 +43,7 @@ const SettingsPersonalization: React.FC<SettingsPersonalizationProps> = ({ confi
         {/* Device Color */}
         <div>
           <label className="text-sm font-medium text-white mb-2 block">
-            Color del dispositivo
+            Device Color
           </label>
           <div className="flex items-center gap-3">
             <input
