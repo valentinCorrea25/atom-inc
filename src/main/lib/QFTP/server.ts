@@ -8,12 +8,13 @@ let fileMetaName: string
 let fileMetaSize: number
 let isWaitingData: boolean = false
 
-let writeStream: fs.WriteStream
 let receivedBytes: number
 
 let SAVE_FOLDER
 
-let server: net.Server
+let startTime = Date.now()
+let writeStream: fs.WriteStream | null
+let server: net.Server | null
 
 export default function startServerForQFTP(saveFolder: string) {
   SAVE_FOLDER = saveFolder
@@ -43,10 +44,14 @@ function readStreamRecived(data: Buffer) {
 
   writeStream.write(data)
   receivedBytes += data.length
+
+  const { speed, eta } = getProgress()
+  console.log(`Velocidad: ${(speed / 1024).toFixed(2)} KB/s, ETA: ${eta.toFixed(1)}s`)
+
   if (receivedBytes >= fileMetaSize) {
     sendAlertToClient(`File: ${fileMetaName} recived succefully.\n\n Saved on ${SAVE_FOLDER}`)
     writeStream.end()
-    server.close()
+    server?.close()
     emptyMetaData()
   }
 }
@@ -70,7 +75,20 @@ function setMetaData(data: Buffer, socket: Socket) {
 }
 
 function emptyMetaData() {
+  console.log('disconnected server')
+  writeStream = null
+  server = null
   fileMetaName = ''
   fileMetaSize = 0
   isWaitingData = false
+  receivedBytes = 0
+  startTime = Date.now()
+}
+
+function getProgress() {
+  const elapsed = (Date.now() - startTime) / 1000
+  const speed = receivedBytes / elapsed
+  const remaining = fileMetaSize - receivedBytes
+  const eta = remaining / speed
+  return { speed, eta }
 }
