@@ -12,9 +12,11 @@ let receivedBytes: number
 
 let SAVE_FOLDER
 
-let startTime = Date.now()
 let writeStream: fs.WriteStream | null
 let server: net.Server | null
+let startTime = Date.now()
+let stopwatch = Date.now()
+let timerInterval
 
 export default function startServerForQFTP(saveFolder: string) {
   SAVE_FOLDER = saveFolder
@@ -45,13 +47,11 @@ function readStreamRecived(data: Buffer) {
   writeStream.write(data)
   receivedBytes += data.length
 
-  const { speed, eta } = getProgress()
-  console.log(`Velocidad: ${(speed / 1024).toFixed(2)} KB/s, ETA: ${eta.toFixed(1)}s`)
-
   if (receivedBytes >= fileMetaSize) {
     sendAlertToClient(`File: ${fileMetaName} recived succefully.\n\n Saved on ${SAVE_FOLDER}`)
     writeStream.end()
     server?.close()
+    stopStopwatch()
     emptyMetaData()
   }
 }
@@ -63,6 +63,8 @@ function setMetaData(data: Buffer, socket: Socket) {
     fileMetaName = request.name
     fileMetaSize = request.size
     isWaitingData = true
+
+    startStopwatch()
 
     socket.write(
       JSON.stringify({
@@ -83,6 +85,8 @@ function emptyMetaData() {
   isWaitingData = false
   receivedBytes = 0
   startTime = Date.now()
+  stopwatch = Date.now()
+  timerInterval = null
 }
 
 function getProgress() {
@@ -91,4 +95,17 @@ function getProgress() {
   const remaining = fileMetaSize - receivedBytes
   const eta = remaining / speed
   return { speed, eta }
+}
+
+function startStopwatch() {
+  stopwatch = Date.now() - startTime
+  timerInterval = setInterval(function printTime() {
+    stopwatch = Date.now() - startTime
+    const { speed, eta } = getProgress()
+    console.log(`Velocidad: ${(speed / 1024).toFixed(2)} KB/s, ETA: ${eta.toFixed(1)}s`)
+  }, 1000)
+}
+
+function stopStopwatch() {
+  clearInterval(timerInterval)
 }
